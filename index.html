@@ -105,12 +105,19 @@
             <h2 class="text-2xl font-bold text-center mb-6 text-gray-800">Login Required</h2>
             <p id="login-prompt" class="text-center text-gray-600 mb-4">Please log in to access editing features.</p>
             <form id="login-form">
-                <input type="email" id="login-email" class="login-input" placeholder="Email" value="admin@gosales.com" required>
-                <input type="password" id="login-password" class="login-input" placeholder="Password" value="admin123" required>
+                <input type="email" id="login-email" class="login-input" placeholder="Email" required>
+                <input type="password" id="login-password" class="login-input" placeholder="Password" required>
+                <div id="password-strength" class="password-strength hidden">
+                    <div class="strength-bar">
+                        <div class="strength-fill"></div>
+                    </div>
+                    <div class="strength-text"></div>
+                    <ul class="password-requirements"></ul>
+                </div>
                 <button type="submit" id="login-button" class="login-button">Login</button>
             </form>
             <p id="login-error" class="error-message hidden"></p>
-            <p class="text-xs text-center text-gray-500 mt-4">Use admin@gosales.com / admin123</p>
+            <p class="text-xs text-center text-gray-500 mt-4">Enter your credentials to access admin features</p>
         </div>
     </div>
 
@@ -548,11 +555,65 @@
         </div>
     </div>
 
+    <script src="security.js"></script>
+    <script src="performance.js"></script>
+    <script src="ui-ux.js"></script>
+    <script src="data-management.js"></script>
+    <script src="monitoring-analytics.js"></script>
+    <script src="deployment-cicd.js"></script>
     <script src="core.js"></script>
     <script src="dashboard.js"></script>
     <script src="target-setting.js"></script>
     <script src="sales-log.js"></script>
     <script src="dsr-performance.js"></script>
     <script src="de-performance.js"></script>
+    <script src="main.js"></script>
+    
+    <!-- Testing modules (only loaded in development) -->
+    <script>
+        // Load testing modules only in development
+        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+            const testScript = document.createElement('script');
+            testScript.src = 'tests.js';
+            testScript.onload = () => {
+                const testSuitesScript = document.createElement('script');
+                testSuitesScript.src = 'test-suites.js';
+                testSuitesScript.onload = () => {
+                    const testRunnerScript = document.createElement('script');
+                    testRunnerScript.src = 'test-runner.js';
+                    testRunnerScript.onload = () => {
+                        console.log('🧪 Testing modules loaded. Run window.runAllTests() to execute tests.');
+                    };
+                    document.head.appendChild(testRunnerScript);
+                };
+                document.head.appendChild(testSuitesScript);
+            };
+            document.head.appendChild(testScript);
+        }
+    </script>
+
+    <!-- Accessibility Controls -->
+    <button id="accessibility-toggle" class="accessibility-toggle" aria-label="Open accessibility settings">
+        ♿
+    </button>
+
+    <!-- Loading Spinner -->
+    <div id="loading-spinner" class="loading-spinner hidden">
+        <div class="spinner-content">
+            <div class="spinner"></div>
+            <div class="spinner-text">Loading...</div>
+            <div class="spinner-progress">
+                <div class="progress-bar">
+                    <div class="progress-fill"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <!-- Live Region for Screen Readers -->
+    <div id="live-region" class="sr-only" aria-live="polite" aria-atomic="true"></div>
 </body>
 </html>

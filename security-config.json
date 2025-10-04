@@ -1,0 +1,12 @@
+{
+  "name": "gonsales-security-config",
+  "version": "1.0.0",
+  "description": "Security configuration for GoNSales development server",
+  "main": "security-headers.js",
+  "scripts": {
+    "dev-secure": "node security-headers.js"
+  },
+  "dependencies": {
+    "http-server": "^14.1.1"
+  }
+}

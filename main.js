@@ -1274,7 +1274,7 @@ function deleteDSR(dsrId) {
     }
 }
 
-// Data Update Functions
+// Enhanced Data Update Functions with Validation
 async function updateSalesData(id, field, value) {
     if (!currentUser) {
         document.getElementById('login-modal').classList.remove('hidden');
@@ -1282,22 +1282,69 @@ async function updateSalesData(id, field, value) {
     }
     
     try {
+        // Start performance monitoring
+        if (window.performanceMonitor) {
+            window.performanceMonitor.startMeasurement('update-sales-data');
+        }
+
+        // Validate input based on field type
+        let validation;
+        switch (field) {
+            case 'monthlyTarget':
+            case 'mtdTarget':
+            case 'mtdActual':
+                validation = SecurityUtils.validateNumber(value, { 
+                    min: 0, 
+                    max: 999999, 
+                    allowDecimals: false, 
+                    required: true 
+                });
+                break;
+            case 'name':
+                validation = SecurityUtils.validateText(value, { 
+                    minLength: 2, 
+                    maxLength: 50, 
+                    required: true,
+                    pattern: /^[a-zA-Z\s]+$/
+                });
+                break;
+            default:
+                validation = { isValid: true, value: value };
+        }
+
+        if (!validation.isValid) {
+            throw new Error(validation.error);
+        }
+
+        const sanitizedValue = validation.value;
+
         if (window.firebase && window.firebase.db) {
             const docRef = window.firebase.firestore.doc(window.firebase.db, 'salesData', id);
-            await window.firebase.firestore.updateDoc(docRef, { [field]: parseInt(value) || 0 });
-            showToast('Sales data updated', 'info');
+            await window.firebase.firestore.updateDoc(docRef, { [field]: sanitizedValue });
+            showToast('Sales data updated successfully', 'info');
         } else {
-            // Update mock data
+            // Update mock data with validation
             const person = salesData.find(p => p.id === id);
             if (person) {
-                person[field] = parseInt(value) || 0;
+                person[field] = sanitizedValue;
+                
+                // Cache updated data
+                if (window.cacheManager) {
+                    window.cacheManager.set('sales-data', salesData, { strategy: 'memory', ttl: 2 * 60 * 1000 });
+                }
             }
             updateTargetSetting();
             updateDashboard();
             showToast('Sales data updated (local)', 'info');
         }
+
+        // End performance monitoring
+        if (window.performanceMonitor) {
+            window.performanceMonitor.endMeasurement('update-sales-data');
+        }
+
     } catch (error) {
-        console.error('Error updating sales data:', error);
+        errorHandler.handleError(error, 'UpdateSalesData');
         showToast('Failed to update sales data', 'error');
     }
 }
@@ -1309,22 +1356,36 @@ async function updateInfrastructureData(id, field, value) {
     }
     
     try {
+        // Validate infrastructure data
+        const validation = SecurityUtils.validateNumber(value, { 
+            min: 0, 
+            max: 9999, 
+            allowDecimals: false, 
+            required: true 
+        });
+
+        if (!validation.isValid) {
+            throw new Error(validation.error);
+        }
+
+        const sanitizedValue = validation.value;
+
         if (window.firebase && window.firebase.db) {
             const docRef = window.firebase.firestore.doc(window.firebase.db, 'infrastructure', id);
-            await window.firebase.firestore.updateDoc(docRef, { [field]: parseInt(value) || 0 });
-            showToast('Infrastructure updated', 'info');
+            await window.firebase.firestore.updateDoc(docRef, { [field]: sanitizedValue });
+            showToast('Infrastructure updated successfully', 'info');
         } else {
-            // Update mock data
+            // Update mock data with validation
             const item = infraData.find(i => i.id === id);
             if (item) {
-                item[field] = parseInt(value) || 0;
+                item[field] = sanitizedValue;
             }
             updateTargetSetting();
             updateDashboard();
             showToast('Infrastructure updated (local)', 'info');
         }
     } catch (error) {
-        console.error('Error updating infrastructure data:', error);
+        errorHandler.handleError(error, 'UpdateInfrastructureData');
         showToast('Failed to update infrastructure data', 'error');
     }
 }
@@ -1336,15 +1397,29 @@ async function updateSalesLogData(dayId, captainName, value) {
     }
     
     try {
+        // Validate sales log data
+        const validation = SecurityUtils.validateNumber(value, { 
+            min: 0, 
+            max: 9999, 
+            allowDecimals: false, 
+            required: true 
+        });
+
+        if (!validation.isValid) {
+            throw new Error(validation.error);
+        }
+
+        const sanitizedValue = validation.value;
+
         if (window.firebase && window.firebase.db) {
             const docRef = window.firebase.firestore.doc(window.firebase.db, 'salesLog', dayId);
-            await window.firebase.firestore.updateDoc(docRef, { [captainName]: parseInt(value) || 0 });
-            showToast('Sales log updated', 'info');
+            await window.firebase.firestore.updateDoc(docRef, { [captainName]: sanitizedValue });
+            showToast('Sales log updated successfully', 'info');
         } else {
-            // Update mock data
+            // Update mock data with validation
             const day = salesLogData.find(d => d.id === dayId);
             if (day) {
-                day[captainName] = parseInt(value) || 0;
+                day[captainName] = sanitizedValue;
                 
                 // Recalculate total
                 let total = 0;
@@ -1358,7 +1433,7 @@ async function updateSalesLogData(dayId, captainName, value) {
             showToast('Sales log updated (local)', 'info');
         }
     } catch (error) {
-        console.error('Error updating sales log data:', error);
+        errorHandler.handleError(error, 'UpdateSalesLogData');
         showToast('Failed to update sales log', 'error');
     }
 }
@@ -1370,22 +1445,63 @@ async function updateDSRData(id, field, value) {
     }
     
     try {
+        // Validate DSR data based on field type
+        let validation;
+        switch (field) {
+            case 'lastMonthActual':
+            case 'thisMonthActual':
+                validation = SecurityUtils.validateNumber(value, { 
+                    min: 0, 
+                    max: 999999, 
+                    allowDecimals: false, 
+                    required: true 
+                });
+                break;
+            case 'name':
+            case 'captainName':
+                validation = SecurityUtils.validateText(value, { 
+                    minLength: 2, 
+                    maxLength: 50, 
+                    required: true,
+                    pattern: /^[a-zA-Z\s]+$/
+                });
+                break;
+            case 'dsrId':
+            case 'cluster':
+            case 'slab':
+                validation = SecurityUtils.validateText(value, { 
+                    minLength: 1, 
+                    maxLength: 20, 
+                    required: true,
+                    pattern: /^[a-zA-Z0-9\s]+$/
+                });
+                break;
+            default:
+                validation = { isValid: true, value: value };
+        }
+
+        if (!validation.isValid) {
+            throw new Error(validation.error);
+        }
+
+        const sanitizedValue = validation.value;
+
         if (window.firebase && window.firebase.db) {
             const docRef = window.firebase.firestore.doc(window.firebase.db, 'dsrPerformance', id);
-            await window.firebase.firestore.updateDoc(docRef, { [field]: parseInt(value) || 0 });
-            showToast('DSR updated', 'info');
+            await window.firebase.firestore.updateDoc(docRef, { [field]: sanitizedValue });
+            showToast('DSR updated successfully', 'info');
         } else {
-            // Update mock data
+            // Update mock data with validation
             const dsr = dsrPerformanceData.find(d => d.id === id);
             if (dsr) {
-                dsr[field] = parseInt(value) || 0;
+                dsr[field] = sanitizedValue;
             }
             updateDSRPerformance();
             updateDashboard();
             showToast('DSR updated (local)', 'info');
         }
     } catch (error) {
-        console.error('Error updating DSR data:', error);
+        errorHandler.handleError(error, 'UpdateDSRData');
         showToast('Failed to update DSR data', 'error');
     }
 }
