@@ -1,0 +1,547 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #f7f8f9;
+}
+
+/* Custom styles for the data table and editable inputs */
+.target-table th, .target-table td {
+    padding: 0.75rem;
+    text-align: left;
+    border: 1px solid #e5e7eb;
+    white-space: nowrap;
+}
+.target-table th {
+    background-color: #f3f4f6;
+    font-weight: 600;
+    color: #1f2937;
+}
+.editable-input {
+    width: 100%;
+    padding: 0.25rem 0.5rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.375rem;
+    text-align: center;
+    font-weight: 600;
+    transition: all 0.2s;
+    background-color: #fff;
+}
+.editable-input:focus {
+    border-color: #10b981;
+    box-shadow: 0 0 0 1px #10b981;
+    outline: none;
+}
+
+.editable-text {
+    width: 100%;
+    padding: 0.25rem 0.5rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.375rem;
+    text-align: left;
+    font-weight: 500;
+    transition: all 0.2s;
+    background-color: #fff;
+}
+.editable-text:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 1px #3b82f6;
+    outline: none;
+}
+
+/* Styles for the Daily Sales Log Table */
+.sales-log-table {
+     width: 100%;
+     border-collapse: collapse; /* keep unified borders */
+     table-layout: fixed;
+     border: 2px solid #cbd5e1; /* strong outer border */
+     border-radius: 8px;
+     overflow: hidden;
+     box-shadow: 0 2px 8px rgba(11,18,30,0.04);
+}
+.sales-log-table th, .sales-log-table td {
+    padding: 0.75rem 0.75rem;
+    text-align: center;
+    border-right: 1px solid #e6e9ef; /* vertical separators */
+    border-bottom: 1px solid #e6e9ef; /* horizontal separators */
+    font-size: 1rem;
+    font-weight: 600; /* stronger base weight for readability */
+}
+.sales-log-table th {
+    background-color: #eef2ff;
+    font-weight: 800; /* bolder headers */
+    color: #0f172a;
+    letter-spacing: 0.02em;
+    text-transform: none;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+.sales-log-table tbody tr:nth-child(even) {
+    background-color: #f9fafb;
+}
+.sales-log-table .date-col {
+    text-align: left;
+    padding-left: 1rem;
+    width: 80px;
+    min-width: 80px;
+    position: sticky;
+    left: 0;
+    background-color: #fff;
+    font-weight: 800; /* make date column bold */
+    z-index: 5;
+}
+.sales-log-table .total-col {
+    font-weight: 900; /* very bold totals */
+    background-color: #f3f4f6;
+    color: #0f172a;
+}
+.sales-log-table td:not(.date-col) {
+    /* emphasize numeric cells */
+    font-weight: 700;
+    color: #0b1220;
+}
+.sales-log-table tbody td {
+    vertical-align: middle;
+}
+.sales-log-table tfoot th {
+     background-color: #d1d5db;
+     font-weight: 900;
+     font-size: 1rem;
+     color: #041025;
+}
+
+/* Remove right border on the last column for a clean outer edge */
+.sales-log-table th:last-child,
+.sales-log-table td:last-child {
+    border-right: none;
+}
+
+/* Ensure the bottom-most row has no extra bottom-border so outer border shows cleanly */
+.sales-log-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* Tweak header separator to be slightly heavier */
+.sales-log-table thead th {
+    border-bottom: 2px solid #cbd5e1;
+}
+
+/* Footer top border stronger to separate totals */
+.sales-log-table tfoot th, .sales-log-table tfoot td {
+    border-top: 2px solid #cbd5e1;
+}
+
+/* Hover and editing improvements for editable sales cells */
+.sales-cell {
+    cursor: pointer;
+    transition: background-color 0.12s, transform 0.08s;
+}
+.sales-cell:hover {
+    background-color: #eef6ff;
+    transform: translateY(-1px);
+}
+.sales-cell.editing {
+    background-color: #dbeafe;
+    padding: 0;
+}
+.sales-cell-input {
+    width: 100%;
+    border: none;
+    background: transparent;
+    text-align: center;
+    font-size: 1rem;
+    font-weight: 700;
+    padding: 0.5rem 0;
+    outline: none;
+}
+
+/* Make footer totals more prominent */
+.sales-log-table tfoot th, .sales-log-table tfoot td {
+    padding: 0.9rem 0.75rem;
+    border-top: 2px solid #cbd5e1;
+}
+
+/* Performance table styles */
+.performance-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+.performance-table th, .performance-table td {
+    padding: 0.75rem;
+    text-align: left;
+    border: 1px solid #e5e7eb;
+}
+.performance-table th {
+    background-color: #f3f4f6;
+    font-weight: 600;
+    color: #1f2937;
+}
+.performance-table tbody tr:hover {
+    background-color: #f9fafb;
+}
+.performance-table tfoot {
+    font-weight: bold;
+    background-color: #f3f4f6;
+}
+
+/* Color coding for performance percentages */
+.performance-excellent {
+    background-color: #d1fae5;
+    color: #065f46;
+    font-weight: bold;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+}
+.performance-good {
+    background-color: #fef3c7;
+    color: #92400e;
+    font-weight: bold;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+}
+.performance-poor {
+    background-color: #fee2e2;
+    color: #991b1b;
+    font-weight: bold;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+}
+.performance-neutral {
+    background-color: #f3f4f6;
+    color: #374151;
+    font-weight: bold;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+}
+
+/* Slab styles */
+.slab-gold {
+    background-color: #fef3c7;
+    color: #92400e;
+    font-weight: bold;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+}
+.slab-silver {
+    background-color: #e5e7eb;
+    color: #374151;
+    font-weight: bold;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+}
+.slab-bronze {
+    background-color: #fcd34d;
+    color: #78350f;
+    font-weight: bold;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+}
+
+/* Editable sales log cell styles */
+.sales-cell {
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+.sales-cell:hover {
+    background-color: #f0f9ff;
+}
+.sales-cell.editing {
+    background-color: #dbeafe;
+    padding: 0;
+}
+.sales-cell-input {
+    width: 100%;
+    border: none;
+    background: transparent;
+    text-align: center;
+    font-size: 0.875rem;
+    padding: 0.25rem;
+    outline: none;
+}
+
+/* Login Modal Styles */
+.login-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+.login-form {
+    background-color: white;
+    padding: 2rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    width: 100%;
+    max-width: 400px;
+}
+.login-input {
+    width: 100%;
+    padding: 0.75rem;
+    margin-bottom: 1rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.375rem;
+    font-size: 1rem;
+}
+.login-input:focus {
+    outline: none;
+    border-color: #10b981;
+    box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
+}
+.login-button {
+    width: 100%;
+    padding: 0.75rem;
+    background-color: #10b981;
+    color: white;
+    border: none;
+    border-radius: 0.375rem;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+.login-button:hover {
+    background-color: #059669;
+}
+.error-message {
+    color: #ef4444;
+    font-size: 0.875rem;
+    margin-top: 0.5rem;
+    text-align: center;
+}
+
+/* User status indicator */
+.user-status {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.375rem;
+    margin-left: 0.5rem;
+}
+.user-status.authenticated {
+    background-color: #d1fae5;
+    color: #065f46;
+}
+.user-status.unauthenticated {
+    background-color: #fef3c7;
+    color: #92400e;
+}
+
+/* Loading spinner */
+.loading-spinner {
+    border: 4px solid #f3f4f6;
+    border-top: 4px solid #10b981;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+    margin: 20px auto;
+}
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Search box styles */
+.search-input {
+    width: 100%;
+    max-width: 300px;
+    padding: 0.5rem 1rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.375rem;
+    font-size: 0.875rem;
+}
+.search-input:focus {
+    outline: none;
+    border-color: #10b981;
+    box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
+}
+
+/* Read-only input styles */
+.readonly-input {
+    width: 100%;
+    padding: 0.25rem 0.5rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.375rem;
+    text-align: center;
+    font-weight: 600;
+    background-color: #f9fafb;
+    color: #6b7280;
+}
+
+/* Edit button styles */
+.edit-button {
+    padding: 0.25rem 0.75rem;
+    background-color: #3b82f6;
+    color: white;
+    border: none;
+    border-radius: 0.25rem;
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+.edit-button:hover {
+    background-color: #2563eb;
+}
+.save-button {
+    padding: 0.25rem 0.75rem;
+    background-color: #10b981;
+    color: white;
+    border: none;
+    border-radius: 0.25rem;
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+.save-button:hover {
+    background-color: #059669;
+}
+.cancel-button {
+    padding: 0.25rem 0.75rem;
+    background-color: #6b7280;
+    color: white;
+    border: none;
+    border-radius: 0.25rem;
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+.cancel-button:hover {
+    background-color: #4b5563;
+}
+
+/* Chart container styles */
+.chart-container {
+    position: relative;
+    height: 300px;
+    width: 100%;
+}
+    
+/* Add Date Button Styles */
+.add-date-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background-color: #10b981;
+    color: white;
+    border: none;
+    border-radius: 0.375rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+.add-date-btn:hover {
+    background-color: #059669;
+}
+    
+/* Add Date Modal Styles */
+.add-date-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+.add-date-form {
+    background-color: white;
+    padding: 2rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    width: 100%;
+    max-width: 400px;
+}
+.date-input {
+    width: 100%;
+    padding: 0.75rem;
+    margin-bottom: 1rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.375rem;
+    font-size: 1rem;
+}
+
+/* Days Worked badge */
+.days-badge {
+    display: inline-block;
+    background: linear-gradient(180deg, #10b981 0%, #059669 100%);
+    color: white;
+    padding: 0.2rem 0.6rem;
+    border-radius: 9999px;
+    font-weight: 800;
+    font-size: 0.9rem;
+    box-shadow: 0 2px 6px rgba(5, 150, 105, 0.12);
+    line-height: 1;
+}
+
+/* Navigation: responsive collapse to icons with tooltips */
+.nav-item { position: relative; }
+.nav-tooltip {
+    position: absolute;
+    bottom: -2.25rem;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #111827;
+    color: #fff;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+    border-radius: 0.375rem;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.12s, transform 0.12s;
+    z-index: 60;
+}
+.nav-item:hover .nav-tooltip, .nav-item:focus .nav-tooltip {
+    opacity: 1;
+    transform: translateX(-50%) translateY(-2px);
+}
+
+/* On small screens collapse labels and show icon-only nav, keep tooltips for explanation */
+@media (max-width: 720px) {
+    .nav-label {
+        display: inline-block;
+        max-width: 0;
+        overflow: hidden;
+        white-space: nowrap;
+        transition: max-width 220ms ease, opacity 220ms ease, margin 220ms ease;
+        opacity: 0;
+        margin-left: 0;
+        margin-right: 0;
+    }
+    .nav-item { padding-left: 0.5rem; padding-right: 0.5rem; }
+    /* When space allows (hover or focus) expand label smoothly */
+    .nav-item:hover .nav-label, .nav-item:focus .nav-label { max-width: 200px; opacity: 1; margin-left: 0.5rem; }
+}
+
+/* Very small screens: move nav to a vertical sidebar on the left */
+@media (max-width: 420px) {
+    header .flex.items-center > div:first-child { display: none; }
+    header { position: fixed; left: 0; top: 0; bottom: 0; width: 64px; z-index: 50; background: #ffffff; box-shadow: 2px 0 8px rgba(11,18,30,0.04); }
+    main { margin-left: 64px; }
+    .nav-item { display: flex; justify-content: center; padding: 0.75rem; }
+    .nav-tooltip { left: 100%; bottom: auto; top: 50%; transform: translateY(-50%) translateX(6px); }
+}
+
+
+.date-input:focus {
+    outline: none;
+    border-color: #10b981;
+    box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
+}
+.modal-buttons {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: flex-end;
+    margin-top: 1rem;
+}

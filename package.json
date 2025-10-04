@@ -1,0 +1,23 @@
+{
+  "name": "gonsales",
+  "version": "1.0.0",
+  "description": "GoNSales static dashboard - development helper",
+  "main": "index.html",
+  "scripts": {
+    "dev": "http-server -p 8000 -c-1",
+    "start": "npm run dev",
+    "emulator:start": "firebase emulators:start --only firestore --project gonsales-emulator",
+    "check": "node tools/check_page.js http://127.0.0.1:8000",
+    "check:emulator": "npm run emulator:start"
+  },
+  "devDependencies": {
+    "http-server": "^14.1.1",
+    "firebase-tools": "^12.11.0"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "firebase": "12.3.0",
+    "jsdom": "^20.0.3"
+  }
+}
