@@ -1211,11 +1211,13 @@ class CICDPipelineManager {
 const deploymentManager = new DeploymentManager();
 const ciCdPipelineManager = new CICDPipelineManager(deploymentManager);
 
-// Export for global use
-window.deploymentManager = deploymentManager;
-window.ciCdPipelineManager = ciCdPipelineManager;
+// Export for global use (only in browser environment)
+if (typeof window !== 'undefined') {
+    window.deploymentManager = deploymentManager;
+    window.ciCdPipelineManager = ciCdPipelineManager;
 
-console.log('🚀 Deployment and CI/CD Pipeline module loaded');
-console.log('📦 Build and deployment capabilities ready');
-console.log('🔄 CI/CD pipeline automation enabled');
-console.log('📊 Quality checks and monitoring active');
+    console.log('🚀 Deployment and CI/CD Pipeline module loaded');
+    console.log('📦 Build and deployment capabilities ready');
+    console.log('🔄 CI/CD pipeline automation enabled');
+    console.log('📊 Quality checks and monitoring active');
+}
