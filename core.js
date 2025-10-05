@@ -799,14 +799,46 @@ function updateUIForAuthentication() {
     const addDSRButton = document.getElementById('add-dsr-button');
     const actionsHeader = document.getElementById('actions-header');
     const dsrPerformanceDescription = document.getElementById('dsr-performance-description');
+    const addDEButton = document.getElementById('add-de-button');
+    const deActionsHeader = document.getElementById('de-actions-header');
+    const dePerformanceDescription = document.getElementById('de-performance-description');
+
     if (currentUser) {
-        userStatus.textContent = 'Authenticated'; userStatus.className = 'user-status authenticated'; logoutButton.classList.remove('hidden'); headerUserId.textContent = currentUser.email || 'Authenticated User'; addDSRButton.classList.remove('hidden'); actionsHeader.classList.remove('hidden'); dsrPerformanceDescription.textContent = 'View and manage DSR performance data.';
-        const resetBtn = document.getElementById('reset-targets-button'); if (resetBtn) resetBtn.classList.remove('hidden');
+        userStatus.textContent = 'Authenticated';
+        userStatus.className = 'user-status authenticated';
+        logoutButton.classList.remove('hidden');
+        headerUserId.textContent = currentUser.email || 'Authenticated User';
+
+        if (addDSRButton) addDSRButton.classList.remove('hidden');
+        if (actionsHeader) actionsHeader.classList.remove('hidden');
+        if (dsrPerformanceDescription) dsrPerformanceDescription.textContent = 'View and manage DSR performance data.';
+
+        if (addDEButton) addDEButton.classList.remove('hidden');
+        if (deActionsHeader) deActionsHeader.classList.remove('hidden');
+        if (dePerformanceDescription) dePerformanceDescription.textContent = 'View and manage DE (Dealer Executive) performance data.';
+
+        const resetBtn = document.getElementById('reset-targets-button');
+        if (resetBtn) resetBtn.classList.remove('hidden');
     } else {
-        userStatus.textContent = 'View Only'; userStatus.className = 'user-status unauthenticated'; logoutButton.classList.add('hidden'); headerUserId.textContent = 'Public View'; addDSRButton.classList.add('hidden'); actionsHeader.classList.add('hidden'); dsrPerformanceDescription.textContent = 'View DSR performance data. Login to edit.';
-        const resetBtn = document.getElementById('reset-targets-button'); if (resetBtn) resetBtn.classList.add('hidden');
+        userStatus.textContent = 'View Only';
+        userStatus.className = 'user-status unauthenticated';
+        logoutButton.classList.add('hidden');
+        headerUserId.textContent = 'Public View';
+
+        if (addDSRButton) addDSRButton.classList.add('hidden');
+        if (actionsHeader) actionsHeader.classList.add('hidden');
+        if (dsrPerformanceDescription) dsrPerformanceDescription.textContent = 'View DSR performance data. Login to edit.';
+
+        if (addDEButton) addDEButton.classList.add('hidden');
+        if (deActionsHeader) deActionsHeader.classList.add('hidden');
+        if (dePerformanceDescription) dePerformanceDescription.textContent = 'View DE (Dealer Executive) performance data. Login to edit.';
+
+        const resetBtn = document.getElementById('reset-targets-button');
+        if (resetBtn) resetBtn.classList.add('hidden');
     }
+
     if (currentView === 'dsr-performance') updateDSRPerformance();
+    if (currentView === 'de-performance') updateDEPerformance();
 }
 
 // Reset all monthly/MTD targets and actuals to zero so we can start fresh (e.g., from 1-Oct)

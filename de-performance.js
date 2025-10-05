@@ -1,19 +1,33 @@
 // DE performance functions
 function updateDEPerformance() {
-    const tableBody = document.getElementById('de-table-body'); if (!tableBody) return;
+    const tableBody = document.getElementById('de-table-body');
+    if (!tableBody) return;
+
     tableBody.innerHTML = dePerformanceData.map(de => {
         const last = parseFloat(de.lastMonthActual) || 0;
         const current = parseFloat(de.thisMonthActual) || 0;
         const slabClass = de.slab ? `slab-${String(de.slab).toLowerCase()}` : 'slab-silver';
+
         return `
             <tr>
                 <td>${de.name || ''}</td>
                 <td>${de.region || ''}</td>
                 <td>${de.captainName || ''}</td>
                 <td>${last}</td>
-                <td>${current}</td>
+                <td>
+                    ${currentUser ?
+                        `<input type="number" class="editable-input" value="${current}" data-id="${de.id}" data-field="thisMonthActual" onchange="updateDEData('${de.id}', 'thisMonthActual', this.value)">` :
+                        `<input type="number" class="readonly-input" value="${current}" readonly>`
+                    }
+                </td>
                 <td><span class="${slabClass}">${de.slab || 'N/A'}</span></td>
-                <td>${currentUser ? `<button class="edit-button" onclick="editDE('${de.id}')">Edit</button> <button class="cancel-button" onclick="deleteDE('${de.id}')">Delete</button>` : ''}</td>
+                ${currentUser ?
+                    `<td>
+                        <button class="edit-button" onclick="editDE('${de.id}')">Edit</button>
+                        <button class="cancel-button" onclick="deleteDE('${de.id}')">Delete</button>
+                    </td>` :
+                    ''
+                }
             </tr>
         `;
     }).join('');

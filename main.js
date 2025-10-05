@@ -431,28 +431,50 @@ function updateUIForAuthentication() {
     const addDSRButton = document.getElementById('add-dsr-button');
     const actionsHeader = document.getElementById('actions-header');
     const dsrPerformanceDescription = document.getElementById('dsr-performance-description');
-    
+    const addDEButton = document.getElementById('add-de-button');
+    const deActionsHeader = document.getElementById('de-actions-header');
+    const dePerformanceDescription = document.getElementById('de-performance-description');
+
     if (currentUser) {
         userStatus.textContent = 'Authenticated';
         userStatus.className = 'user-status authenticated';
         logoutButton.classList.remove('hidden');
         headerUserId.textContent = currentUser.email || 'Authenticated User';
-        addDSRButton.classList.remove('hidden');
-        actionsHeader.classList.remove('hidden');
-        dsrPerformanceDescription.textContent = 'View and manage DSR performance data.';
+
+        if (addDSRButton) addDSRButton.classList.remove('hidden');
+        if (actionsHeader) actionsHeader.classList.remove('hidden');
+        if (dsrPerformanceDescription) dsrPerformanceDescription.textContent = 'View and manage DSR performance data.';
+
+        if (addDEButton) addDEButton.classList.remove('hidden');
+        if (deActionsHeader) deActionsHeader.classList.remove('hidden');
+        if (dePerformanceDescription) dePerformanceDescription.textContent = 'View and manage DE (Dealer Executive) performance data.';
+
+        const resetBtn = document.getElementById('reset-targets-button');
+        if (resetBtn) resetBtn.classList.remove('hidden');
     } else {
         userStatus.textContent = 'View Only';
         userStatus.className = 'user-status unauthenticated';
         logoutButton.classList.add('hidden');
         headerUserId.textContent = 'Public View';
-        addDSRButton.classList.add('hidden');
-        actionsHeader.classList.add('hidden');
-        dsrPerformanceDescription.textContent = 'View DSR performance data. Login to edit.';
+
+        if (addDSRButton) addDSRButton.classList.add('hidden');
+        if (actionsHeader) actionsHeader.classList.add('hidden');
+        if (dsrPerformanceDescription) dsrPerformanceDescription.textContent = 'View DSR performance data. Login to edit.';
+
+        if (addDEButton) addDEButton.classList.add('hidden');
+        if (deActionsHeader) deActionsHeader.classList.add('hidden');
+        if (dePerformanceDescription) dePerformanceDescription.textContent = 'View DE (Dealer Executive) performance data. Login to edit.';
+
+        const resetBtn = document.getElementById('reset-targets-button');
+        if (resetBtn) resetBtn.classList.add('hidden');
     }
-    
+
     // Update current view to reflect authentication changes
     if (currentView === 'dsr-performance') {
         updateDSRPerformance();
+    }
+    if (currentView === 'de-performance') {
+        updateDEPerformance();
     }
 }
 
@@ -1503,6 +1525,102 @@ async function updateDSRData(id, field, value) {
     } catch (error) {
         errorHandler.handleError(error, 'UpdateDSRData');
         showToast('Failed to update DSR data', 'error');
+    }
+}
+
+async function updateDEData(id, field, value) {
+    if (!currentUser) {
+        document.getElementById('login-modal').classList.remove('hidden');
+        return;
+    }
+
+    try {
+        let validation;
+        switch (field) {
+            case 'lastMonthActual':
+            case 'thisMonthActual':
+                validation = SecurityUtils.validateNumber(value, {
+                    min: 0,
+                    max: 999999,
+                    allowDecimals: false,
+                    required: true
+                });
+                break;
+            case 'name':
+            case 'captainName':
+                validation = SecurityUtils.validateText(value, {
+                    minLength: 2,
+                    maxLength: 50,
+                    required: true,
+                    pattern: /^[a-zA-Z\s]+$/
+                });
+                break;
+            case 'deId':
+            case 'region':
+            case 'slab':
+                validation = SecurityUtils.validateText(value, {
+                    minLength: 1,
+                    maxLength: 20,
+                    required: true,
+                    pattern: /^[a-zA-Z0-9\s]+$/
+                });
+                break;
+            default:
+                validation = { isValid: true, value: value };
+        }
+
+        if (!validation.isValid) {
+            throw new Error(validation.error);
+        }
+
+        const sanitizedValue = validation.value;
+
+        if (window.firebase && window.firebase.db) {
+            const docRef = window.firebase.firestore.doc(window.firebase.db, 'dePerformance', id);
+            await window.firebase.firestore.updateDoc(docRef, { [field]: sanitizedValue });
+            showToast('DE updated successfully', 'info');
+        } else {
+            const de = dePerformanceData.find(d => d.id === id);
+            if (de) {
+                de[field] = sanitizedValue;
+            }
+            saveDEToStorage();
+            updateDEPerformance();
+            updateDashboard();
+            showToast('DE updated (local)', 'info');
+        }
+    } catch (error) {
+        errorHandler.handleError(error, 'UpdateDEData');
+        showToast('Failed to update DE data', 'error');
+    }
+}
+
+async function saveDE(deData) {
+    if (!currentUser) {
+        document.getElementById('login-modal').classList.remove('hidden');
+        return;
+    }
+
+    try {
+        if (window.firebase && window.firebase.db) {
+            const docRef = window.firebase.firestore.doc(window.firebase.db, 'dePerformance', deData.id);
+            await window.firebase.firestore.setDoc(docRef, deData, { merge: true });
+            showToast('DE saved successfully', 'info');
+        } else {
+            const index = dePerformanceData.findIndex(d => d.id === deData.id);
+            if (index !== -1) {
+                dePerformanceData[index] = deData;
+            } else {
+                dePerformanceData.push(deData);
+            }
+            saveDEToStorage();
+            updateDEPerformance();
+            updateDashboard();
+            showToast('DE saved (local)', 'info');
+        }
+    } catch (error) {
+        errorHandler.handleError(error, 'SaveDE');
+        showToast('Failed to save DE', 'error');
     }
 }
 
